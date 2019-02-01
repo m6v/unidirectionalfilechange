@@ -1,0 +1,10 @@
+[Unit]
+Description=UnidirectionalFileChangeReciever Service
+After=multi-user.target
+
+[Service]
+Type=idle
+ExecStart=/usr/bin/python3 /home/maksimov/Workspace/UnidirectionalFileChange/reciever.py --dir=/home/maksimov/Downloads --port=4500 --addr=127.0.0.1
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,171 @@
+В связи с тем, что передача данных от многофункционального базового пункта приема информации (МФБППИ) "Сюжет-МФ" в автоматизированные системы военного назначения, обрабатывающие сведения, содержащие государственную тайну, должна осуществляться в однонаправленном режиме, решения, принятые в техническом проекте, нуждаются в корректировке.
+Предлагается 2 способа (режима) обмена данными: двунаправленный и однонаправленный. В обоих случаях результаты обработки гидрометеорологической информации сохраняются в корневом каталоге ftp-сервера МФБППИ.
+Потребители информации, обмен с которыми возможен в двунаправленном режиме, загружают результаты обработки с помощью ftp-клиента.
+Однонаправленный (unidirectional) обмен с потребителями осуществляется с использованием программных компонентов hairgap. При этом на стороне МФБППИ устанавливается программный компонент однонаправленной передачи (hairgaps), а на стороне потребителей - программный компонент однонаправленного приема (hairgapr).
+В состав СПО МФБППИ будут включены "обертки" над этими компонентами: sender.py для hairgaps и reciever.py для hairgapr.
+На МФБППИ в фоновом режиме функционирует компонент sender.py, который с помощью подсистемы inotify ядра ОС Astra Linux осуществляет контроль изменений в корневом каталоге ftp-сервера. По мере появления в этом каталоге новых файлов каждый из них снабжается концевиком фиксированного размера, включающим служебную информацию (в том числе имя файла), и в виде UDP-датаграмм отправляются потребителям информации.
+У потребителей информации в фоновом режиме функционирует компонент reciever.py, который принимает UDP-датаграммы, осуществляет "сборку" файла, считывает служебную информацию из концевика, удаляет концевик, меняет временное имя файла на исходное (записанное в концевике).
+
+
+Установка Hairgap в Ubuntu
+--------------------------
+~$ sudo apt install git
+~$ sudo apt install clang
+~$ cd /tmp
+~$ git clone --recursive https://github.com/cea-sec/hairgap  # в Astra Linux SE 1.6 ошибка "fatal: unable to access 'https://https://github.com/cea-sec/hairgap' : Problem with the SSL CA cert (path? access rights?)
+~$ cd ./wirehair
+~$ make
+~$ cd ..
+~$ make
+~$ sudo cp ./hairgap* /usr/local/bin
+
+
+Установка пакетов для организации очереди сообщений с помощью RabbitMQ в Ubuntu
+--------------------------------------------------------------------------------
+~$ sudo apt install python-pip3 git-core # возможно git-core не нужен
+~$ sudo apt install rabbitmq-server
+~$ sudo systemctl start rabbitmq-server
+
+
+Установка pika-0.13.0 в Ubuntu
+------------------------------
+sudo pip3 install pika
+
+
+Установка pika-1.0.0b2 в Ubuntu
+-------------------------------
+~$ cd /tmp
+~$ git clone https://github.com/pika/pika
+~$ cd /tmp/pika
+~$ sudo python3 ./setup.py install
+# путь к установленному модулю: /usr/local/lib/python3.5/dist-packages
+
+
+Формирование исполняемого файла из *.py
+---------------------------------------
+# установить Pyinstaller с помощью pip:
+~$ pip3 install pyinstaller
+
+# или из архива:
+~$ cd /tmp
+~$ wget https://github.com/pyinstaller/pyinstaller/releases/download/v3.4/PyInstaller-3.4.tar.gz
+# или https://github.com/pyinstaller/pyinstaller
+~$ tar xvzf ./PyInstaller-3.4.tar.gz
+~$ cd ./PyInstaller-3.4
+~$ sudo python3 setup.py install
+
+
+sudo ln -s ~/home/.local/bin /usr/local/bin
+pyinstaller --onefile  --noconsole ./notifier.py
+# исполняемые файлы размещаются в каталоге dist проекта
+
+
+Примеры использования RabbitMQ в Python
+---------------------------------------
+# https://habr.com/ru/post/149694/
+# https://pika.readthedocs.io/en/stable/
+
+
+Использование оберток reciever.py и sender.py
+---------------------------------------------
+Зачения параметров по умолчанию:
+port = 4500
+timeout = 5
+
+~$ sender.py --dir=/home/maksimov/Uploads --timeout=5 --addr=127.0.0.1 --port=4500
+~$ reciever.py --dir=/home/maksimov/Downloads --port=4500 --addr=127.0.0.1
+
+Проверка пути установки модулей
+-------------------------------
+python3
+>>> import inspect
+>>> import module_name
+>>> inspect.getfile(module_name)
+>>> module_name.__version__
+
+Настройки Geany
+---------------
+Настройки -> Инструменты -> Терминал: xfce4-terminal -e "/bin/sh %c"
+Сборка -> Установить команды сборки -> Execute: /usr/bin/python3 "%f"
+
+Управление передатчиком и приемником через systemd
+--------------------------------------------------
+~$ sudo cp ./reciever.py /usr/local/bin
+~$ sudo cp ./sender.py /usr/local/bin
+~$ sudo cp ./sender.service /lib/systemd/system
+~$ sudo cp ./reciever.service /lib/systemd/system
+
+~$ sudo systemctl daemon-reload
+~$ sudo systemctl start sender.service
+~$ sudo systemctl start reciever.service
+
+~$ systemctl status sender.service
+~$ systemctl status reciever.service
+
+~$ sudo systemctl stop sender.service
+~$ sudo systemctl stop reciever.service
+
+~$ sudo systemctl start rabbitmq-server
+~$ sudo systemctl stop rabbitmq-server
+~$ systemctl status rabbitmq-server
+
+
+# Установка Hairgap в Astra Linux SE 1.6
+----------------------------------------
+~$ sudo apt-cdrom add
+~$ sudo apt install make
+~$ sudo apt install clang
+~$ unzip hairgap.zip -d /tmp/hairgap
+~$ cd /tmp/hairgap/wirehair
+~$ make
+~$ cd ..
+~$ make
+~$ sudo cp ./hairgap* /usr/local/bin
+
+
+Установка пакетов для организации очереди сообщений с помощью RabbitMQ в Astra Linux SE 1.6
+-------------------------------------------------------------------------------------------
+~$ sudo apt install rabbitmq-server
+~$ sudo systemctl start rabbitmq-server
+
+
+Установка pika-1.0.0b2 в Astra Linux SE 1.6
+-------------------------------------------
+~$ sudo apt install python3-setuptools
+~$ unzip pika-master.zip -d /tmp
+~$ cd /tmp/pika-master
+~$ sudo python3 ./setup.py install
+
+
+Копирование скриптов sender и reciever в Astra Linux SE 1.6
+-----------------------------------------------------------
+~$ sudo cp ./reciever.py /usr/local/bin
+~$ sudo cp ./sender.py /usr/local/bin
+
+
+Автозапуск служб sender и reciever в Astra Linux SE 1.6
+-------------------------------------------------------
+~$ sudo cp ./reciever.py /usr/local/bin
+~$ sudo cp ./sender.py /usr/local/bin
+~$ sudo cp ./reciever.service /lib/systemd/system
+~$ sudo cp ./reciever.service /lib/systemd/system
+~$ sudo systemctl daemon-reload
+~$ sudo systemctl start sender.service
+~$ sudo systemctl start reciever.service
+
+в Pysharm для запуска mc с нормальной расцветкой использовать
+~$ mc -S modarin256
+
+TODO: создать git репозиторий проекта
+      написать имитатор, который в случайные моменты времени генерирует файлы в отслеживаемой директории
+      скомпилировать *.py файлы (pyinstaller --onefile --icon=name.ico --noconsole *.py) и проверить, что они работают на Astra Linux SE 1.6
+      если будут проблемы с pyinstaller, попробовать pyqtdeploy (см. https://www.riverbankcomputing.com/software/pyqtdeploy/download
+      избавиться от вывода питоном сообщений в /var/log/syslog
+      сделать Makefile для сборки pyinstaller  и т.п.
+
+
+
+
+
+
+

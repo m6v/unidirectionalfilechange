@@ -1,0 +1,10 @@
+[Unit]
+Description=UnidirectionalFileChangeSender Service
+After=multi-user.target
+
+[Service]
+Type=idle
+ExecStart=/usr/bin/python3 /home/maksimov/Workspace/UnidirectionalFileChange/sender.py --dir=/home/maksimov/Uploads --timeout=5 --addr=127.0.0.1 --port=4500
+
+[Install]
+WantedBy=multi-user.target
