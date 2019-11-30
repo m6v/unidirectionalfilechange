@@ -160,7 +160,7 @@ TODO: создать git репозиторий проекта
       написать имитатор, который в случайные моменты времени генерирует файлы в отслеживаемой директории
       скомпилировать *.py файлы (pyinstaller --onefile --icon=name.ico --noconsole *.py) и проверить, что они работают на Astra Linux SE 1.6
       если будут проблемы с pyinstaller, попробовать pyqtdeploy (см. https://www.riverbankcomputing.com/software/pyqtdeploy/download
-      избавиться от вывода питоном сообщений в /var/log/syslog
+      избавиться от вывода питоном сообщений в /var/log/syslog ?
       сделать Makefile для сборки pyinstaller  и т.п.
 
 
