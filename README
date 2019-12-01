@@ -7,39 +7,6 @@
 У потребителей информации в фоновом режиме функционирует компонент reciever.py, который принимает UDP-датаграммы, осуществляет "сборку" файла, считывает служебную информацию из концевика, удаляет концевик, меняет временное имя файла на исходное (записанное в концевике).
 
 
-Установка Hairgap в Ubuntu
---------------------------
-~$ sudo apt install git
-~$ sudo apt install clang
-~$ cd /tmp
-~$ git clone --recursive https://github.com/cea-sec/hairgap  # в Astra Linux SE 1.6 ошибка "fatal: unable to access 'https://https://github.com/cea-sec/hairgap' : Problem with the SSL CA cert (path? access rights?)
-~$ cd ./wirehair
-~$ make
-~$ cd ..
-~$ make
-~$ sudo cp ./hairgap* /usr/local/bin
-
-
-Установка пакетов для организации очереди сообщений с помощью RabbitMQ в Ubuntu
---------------------------------------------------------------------------------
-~$ sudo apt install python-pip3 git-core # возможно git-core не нужен
-~$ sudo apt install rabbitmq-server
-~$ sudo systemctl start rabbitmq-server
-
-
-Установка pika-0.13.0 в Ubuntu
-------------------------------
-sudo pip3 install pika
-
-
-Установка pika-1.0.0b2 в Ubuntu
--------------------------------
-~$ cd /tmp
-~$ git clone https://github.com/pika/pika
-~$ cd /tmp/pika
-~$ sudo python3 ./setup.py install
-# путь к установленному модулю: /usr/local/lib/python3.5/dist-packages
-
 
 Формирование исполняемого файла из *.py
 ---------------------------------------
@@ -126,19 +93,12 @@ python3
 Установка пакетов для организации очереди сообщений с помощью RabbitMQ в Astra Linux SE 1.6
 -------------------------------------------------------------------------------------------
 ~$ sudo apt install rabbitmq-server
-~$ sudo systemctl start rabbitmq-server
-
-
-Установка pika-1.0.0b2 в Astra Linux SE 1.6
--------------------------------------------
-~$ sudo apt install python3-setuptools
-~$ unzip pika-master.zip -d /tmp
-~$ cd /tmp/pika-master
-~$ sudo python3 ./setup.py install
+~$ sudo systemctl start rabbitmq-server # уточнить устанавливается автоматически или нет!
 
 
 Копирование скриптов sender и reciever в Astra Linux SE 1.6
 -----------------------------------------------------------
+# нет, нужно делать *.deb пакет!
 ~$ sudo cp ./reciever.py /usr/local/bin
 ~$ sudo cp ./sender.py /usr/local/bin
 
@@ -156,12 +116,6 @@ python3
 в Pysharm для запуска mc с нормальной расцветкой использовать
 ~$ mc -S modarin256
 
-TODO: создать git репозиторий проекта
-      написать имитатор, который в случайные моменты времени генерирует файлы в отслеживаемой директории
-      скомпилировать *.py файлы (pyinstaller --onefile --icon=name.ico --noconsole *.py) и проверить, что они работают на Astra Linux SE 1.6
-      если будут проблемы с pyinstaller, попробовать pyqtdeploy (см. https://www.riverbankcomputing.com/software/pyqtdeploy/download
-      избавиться от вывода питоном сообщений в /var/log/syslog ?
-      сделать Makefile для сборки pyinstaller  и т.п.
 
 
 

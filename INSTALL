@@ -1,0 +1,49 @@
+Установка Hairgap в Ubuntu
+--------------------------
+~$ sudo apt install git
+~$ sudo apt install clang
+~$ cd /tmp
+~$ git clone --recursive https://github.com/cea-sec/hairgap  # в Astra Linux SE 1.6 ошибка "fatal: unable to access 'https://https://github.com/cea-sec/hairgap' : Problem with the SSL CA cert (path? access rights?)
+~$ cd ./wirehair
+~$ make
+~$ cd ..
+~$ make
+~$ sudo cp ./hairgap* /usr/local/bin
+
+
+Установка пакетов для организации очереди сообщений с помощью RabbitMQ в Ubuntu
+--------------------------------------------------------------------------------
+~$ sudo apt install python-pip3 git-core # возможно git-core не нужен !Уточнить
+~$ sudo apt install rabbitmq-server
+~$ sudo systemctl start rabbitmq-server
+
+
+Установка с помощью pip (по всей видимости с https://pypi.org)
+--------------------------------------------------------------
+~$ sudo apt install python3-pip
+~$ sudo pip3 install pika
+
+
+Установка из исходников на Github
+---------------------------------
+~$ cd /tmp
+~$ git clone https://github.com/pika/pika
+~$ cd /tmp/pika
+~$ sudo python3 ./setup.py install
+# путь к установленному модулю: /usr/local/lib/python3.5/dist-packages
+
+
+Установка из репозитория Python Package Index (PyPI, https://pypi.org)
+----------------------------------------------------------------------
+cd /tmp
+wget https://files.pythonhosted.org/packages/8c/6d/a526ad96ffb8aa0d3ab7e8660eb1c9fc964a02e7624112d70e4b63fb2bb7/pika-1.1.0.tar.gz
+tar -xzf ./pika-1.1.0.tar.gz
+cd /tmp/pika-1.1.0
+sudo python3 ./setup.py install
+
+Установка pika-1.0.0b2 в Astra Linux SE 1.6
+-------------------------------------------
+~$ sudo apt install python3-setuptools
+~$ unzip pika-master.zip -d /tmp # откуда берется pika-master.zip?!
+~$ cd /tmp/pika-master
+~$ sudo python3 ./setup.py install
